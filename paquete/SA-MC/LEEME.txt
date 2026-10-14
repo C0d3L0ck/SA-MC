@@ -1,0 +1,99 @@
+SA:MC 1.0 (San Andreas: MultiCore) - GTA San Andreas usando todos los nucleos del procesador
+============================================================================================
+Creador: C0D3L0CK
+(English: see README.txt)
+
+Que es
+------
+Un complemento (samc.asi) para GTA San Andreas 1.0 US que reprograma partes del motor del juego para
+que las escenas pesadas (muchos autos, muchos jugadores de SA-MP, muchos efectos) vayan mas rapido:
+
+  - El dibujo se entrega a la tarjeta de video desde otro nucleo del procesador.
+  - Los autos iguales se dibujan "en bola" (una sola orden para todos los de un mismo modelo).
+  - Las posiciones de las piezas de los autos se calculan en varios nucleos.
+  - Arregla limites del motor que se quedan cortos con muchos jugadores (las "referencias").
+  - Evita llamadas repetidas a Windows del sonido (DirectSound) y de SA-MP.
+  - Acelera los choques de personas y autos (descarta antes las pruebas que el juego igual rechazaba).
+  - La animacion de las personas (la pose de los huesos) se calcula en varios nucleos.
+  - El sonido (los 48 canales de DirectSound) se entrega desde otro nucleo.
+  - Efectos (fuego, humo, agua): el juego recalculaba en cada cuadro los nombres de 13 sonidos por cada
+    efecto encendido; ahora se calculan una vez. Las particulas se mueven en varios nucleos.
+  - Opcional: DXVK (Direct3D 9 sobre Vulkan), incluido.
+
+Todo lo que se reparte entre nucleos da exactamente el mismo resultado que el juego original: se comprobo
+byte a byte (millones de animaciones, particulas y sonidos) comparando contra el codigo original.
+
+No modifica ningun archivo del juego. Si lo quitas, el juego queda exactamente como antes.
+
+Resultados medidos (Xeon E5-2680 v4 + RTX 5060 Ti, 1920x1080, SA-MP 0.3.7, sin el tope de FPS de SA-MP)
+---------------------------------------------------------------------------------------------------------
+  Escena                                   Juego original   Con SA:MC
+  1000 autos en el aeropuerto                  44 FPS          134 FPS
+  600 autos cerca de la camara                 43 FPS           96 FPS
+  200 jugadores caminando y manejando          33 FPS          151 FPS   (bajones: de 14 a 98 FPS)
+  500 fuegos y humos                          197 FPS          453 FPS
+  Todo junto: 200 jugadores, 300 autos
+  y 100 efectos                                27 FPS           91 FPS   (bajones: de 10 a 66 FPS)
+
+Ojo: SA-MP limita los FPS (con el "limitador de cuadros" del menu encendido, a unos 50; apagado, a unos
+100). La mejora se nota sobre todo cuando el juego bajaba de ese tope: servidores llenos, eventos, carreras.
+
+Requisitos
+----------
+  - GTA San Andreas version 1.0 US (la que usa SA-MP). Con otra version el complemento no hace nada.
+  - Un cargador de ASI. Si ya usas CLEO, modloader u otros .asi, ya lo tienes. Si no, el instalador ofrece
+    el de SA:MC: un vorbisFile.dll que carga los .asi y le pasa todo lo demas al vorbisFile.dll original
+    (que queda guardado como vorbisHooked.dll; desinstalar.bat lo devuelve si ningun otro .asi lo usa).
+  - Windows 10 u 11. Para DXVK: una tarjeta de video con Vulkan (cualquiera de los ultimos 8 anos).
+
+Instalar
+--------
+  1. Cierra el juego.
+  2. Doble clic en instalar.bat. Busca solo la carpeta del juego (si usas SA-MP la encuentra), revisa la
+     version y el cargador de ASI, y copia: samc.asi, samc.ini y la carpeta dxvk.
+     Si el juego esta en "Archivos de programa", Windows pide permiso de administrador.
+  3. Juega como siempre (un jugador o SA-MP).
+
+Instalacion a mano: copia el contenido de la carpeta "archivos" dentro de la carpeta del juego
+(donde esta gta_sa.exe).
+
+Quitar
+------
+Doble clic en desinstalar.bat (o borra samc.asi, samc.ini y la carpeta dxvk de la carpeta del juego).
+
+Opciones (samc.ini, con el Bloc de notas)
+---------------------------------------------
+  hilo_dibujo=1            Dibujo en otro nucleo.
+  d3d9_dll=dxvk\d3d9.dll   Usar DXVK. Pon un ; delante para usar el Direct3D de siempre.
+  juntar_autos=2           Autos "en bola". 0 = apagado.
+  ruedas_lejanas_m=150     Autos a mas de 150 m sin ruedas (miden 1 o 2 pixeles). 0 = siempre con ruedas.
+  piezas_paralelo=2        Piezas de los autos en varios nucleos. 0 = apagado.
+  reflejo_una_vez=1        Brillo del reflejo una vez por modelo (mismo resultado). 0 = apagado.
+  referencias_extra=30000  Mas "referencias" del motor (muchos jugadores). 0 = como el original.
+  atajo_sonido=1           DirectSound sin leer el registro en cada sonido. 0 = apagado.
+  atajo_samp=1             Permisos de memoria de SA-MP sin repetir. 0 = apagado (por ejemplo si un servidor
+                           con anticheat instalado en tu PC se queja).
+  choques_rapidos=1        Choques mas rapidos con el mismo resultado. 0 = como el original.
+  sonido_hilo=1            El sonido se entrega desde otro nucleo. 0 = en el nucleo del juego.
+  animacion_paralelo=1     Animacion de las personas en varios nucleos (mismo resultado). 0 = como el original.
+  efectos_sonido=1         Nombres de los sonidos de los efectos calculados una vez (mismo resultado). 0 = original.
+  efectos_paralelo=1       Particulas de los efectos en varios nucleos (mismo resultado). 0 = como el original.
+  registro_fps=1           Anota los FPS de cada minuto de juego en samc.log. 0 = no anotar.
+
+Que vas a notar
+---------------
+  - Mas FPS y menos bajones con muchos autos, jugadores o efectos.
+  - Los vidrios de los autos dejan ver lo que hay detras (el auto de atras, el interior). En el juego
+    original a veces se veia el suelo a traves del auto o rayas oscuras.
+  - Con DXVK, cambiar de ventana (Alt+Tab) puede tardar un poco mas.
+
+Si algo falla
+-------------
+  - Apaga opciones de a una en samc.ini (empieza por d3d9_dll y juntar_autos) y prueba de nuevo.
+  - El archivo samc.log cuenta que hizo el complemento. Si el juego esta en "Archivos de programa",
+    Windows lo guarda en:
+    %LOCALAPPDATA%\VirtualStore\Program Files (x86)\Rockstar Games\GTA San Andreas\samc.log
+  - Si tienes ENB, ReShade u otro d3d9.dll en la carpeta del juego: con SA:MC el dibujo va por DXVK.
+    Para seguir usando el tuyo, pon d3d9_dll=d3d9.dll (sin DXVK).
+
+Licencias y creditos: ver LICENCIAS.txt.

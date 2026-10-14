@@ -1,0 +1,27 @@
+LIBRARY vorbisFile.dll
+EXPORTS
+    ov_read=vorbisHooked.ov_read @1
+    ov_comment=vorbisHooked.ov_comment @2
+    ov_info=vorbisHooked.ov_info @3
+    ov_time_tell=vorbisHooked.ov_time_tell @4
+    ov_pcm_tell=vorbisHooked.ov_pcm_tell @5
+    ov_raw_tell=vorbisHooked.ov_raw_tell @6
+    ov_time_seek_page=vorbisHooked.ov_time_seek_page @7
+    ov_time_seek=vorbisHooked.ov_time_seek @8
+    ov_pcm_seek_page=vorbisHooked.ov_pcm_seek_page @9
+    ov_pcm_seek=vorbisHooked.ov_pcm_seek @10
+    ov_raw_seek=vorbisHooked.ov_raw_seek @11
+    ov_time_total=vorbisHooked.ov_time_total @12
+    ov_pcm_total=vorbisHooked.ov_pcm_total @13
+    ov_raw_total=vorbisHooked.ov_raw_total @14
+    ov_serialnumber=vorbisHooked.ov_serialnumber @15
+    ov_seekable=vorbisHooked.ov_seekable @16
+    ov_streams=vorbisHooked.ov_streams @17
+    ov_bitrate_instant=vorbisHooked.ov_bitrate_instant @18
+    ov_bitrate=vorbisHooked.ov_bitrate @19
+    ov_test_open=vorbisHooked.ov_test_open @20
+    ov_test_callbacks=vorbisHooked.ov_test_callbacks @21
+    ov_test=vorbisHooked.ov_test @22
+    ov_open_callbacks=vorbisHooked.ov_open_callbacks @23
+    ov_open=vorbisHooked.ov_open @24
+    ov_clear=vorbisHooked.ov_clear @25

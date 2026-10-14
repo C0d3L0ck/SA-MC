@@ -1,0 +1,23 @@
+# Compilados
+codigo/bin/
+codigo/obj/
+__pycache__/
+*.o
+*.map
+*.asi
+*.exe
+*.dll
+*.zip
+
+# Nunca al repositorio: el juego, programas de otros, resultados y registros
+lab/
+herramientas/
+descargas/
+servidor_omp/
+resultados/
+para_tu_juego/
+paquete/SA-MC/archivos/dxvk/
+paquete/SA-MC/archivos/cargador/
+*.log
+*.bmp
+*.csv
